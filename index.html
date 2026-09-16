@@ -1,23 +1,15 @@
-<!DOCTYPE html>
+html<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Изучение слов</title>
-    <!-- Подключаем Telegram SDK -->
-    <script src="https://telegram.org"></script>
+    <title>Тема: Приветствия</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="app">
-        <!-- Экран загрузки / Ошибки -->
-        <div id="menu-screen" class="screen">
-            <h2>Выберите тему или перейдите по ссылке</h2>
-        </div>
-
-        <!-- Экран игры -->
-        <div id="game-screen" class="screen hidden">
-            <h2 id="theme-title">Тема</h2>
+        <div id="game-screen" class="screen">
+            <h2>Тема: Приветствия</h2>
             
             <div class="card">
                 <img id="word-image" src="" alt="Картинка слова">
@@ -25,18 +17,15 @@
             </div>
 
             <div class="controls">
-                <!-- Кнопка слушать эталон -->
-                <button id="btn-play" class="btn">Послушать</button>
-                
-                <!-- Кнопка говорить ответ -->
-                <button id="btn-speak" class="btn btn-mic">Говорить ??</button>
+                <button id="btn-play" class="btn">Послушать 🔊</button>
+                <button id="btn-speak" class="btn btn-mic">Говорить 🎤</button>
             </div>
 
             <div id="result-box">
                 <p id="result-text">Нажмите «Говорить» и произнесите слово.</p>
             </div>
 
-            <button id="btn-next" class="btn hidden">Следующее слово ??</button>
+            <button id="btn-next" class="btn hidden">Следующее слово ➡️</button>
         </div>
     </div>
 
