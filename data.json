@@ -1,0 +1,21 @@
+{
+  "themes": [
+    {
+      "theme_name": "greetings",
+      "words": [
+        {
+          "id": 1,
+          "word": "привет",
+          "image": "privet.jpg",
+          "audio": "privet.mp3"
+        },
+        {
+          "id": 2,
+          "word": "здравствуйте",
+          "image": "zdravst.jpg",
+          "audio": "zdravst.mp3"
+        }
+      ]
+    }
+  ]
+}
