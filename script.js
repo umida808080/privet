@@ -1,4 +1,3 @@
-// База данных слов встроена прямо в код страницы
 const currentWords = [
     {
       "id": 1,
@@ -24,7 +23,7 @@ const btnSpeak = document.getElementById('btn-speak');
 const btnNext = document.getElementById('btn-next');
 const resultText = document.getElementById('result-text');
 
-// Автоматический старт при открытии страницы
+// Старт игры
 showWord();
 
 function showWord() {
@@ -37,54 +36,81 @@ function showWord() {
     
     resultText.innerText = "Нажмите «Говорить» и произнесите слово.";
     resultText.style.color = "#222222";
-    btnNext.classList.add('hidden');
+    
+    // Кнопка "Дальше" теперь видна всегда, чтобы пользователь не застревал
+    if (currentIndex < currentWords.length - 1) {
+        btnNext.classList.remove('hidden');
+        btnNext.innerText = "Следующее слово ➡️";
+    } else {
+        btnNext.classList.add('hidden'); // На последнем слове прячем её
+    }
 }
 
+// Озвучка эталона
 btnPlay.onclick = () => {
-    if (currentAudio) currentAudio.play();
+    if (currentAudio) {
+        currentAudio.play().catch(e => {
+            console.log("Ошибка аудио, возможно файл не найден:", e);
+            alert("Не удалось воспроизвести аудио. Проверьте файл " + currentWords[currentIndex].audio);
+        });
+    }
 };
 
+// Распознавание речи
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if (SpeechRecognition) {
     const recognition = new SpeechRecognition();
     recognition.lang = 'ru-RU';
     recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
     btnSpeak.onclick = () => {
-        resultText.innerText = "Слушаю вас... Говорите!";
+        resultText.innerText = "Слушаю вас... Говорите громко и четко!";
         resultText.style.color = "#2481cc";
-        recognition.start();
+        try {
+            recognition.start();
+        } catch(e) {
+            recognition.stop();
+            setTimeout(() => recognition.start(), 300);
+        }
     };
 
     recognition.onresult = (event) => {
-        const userSpoke = event.results.transcript.toLowerCase().trim();
+        const userSpoke = event.results[0][0].transcript.toLowerCase().trim();
         const correctWord = currentWords[currentIndex].word.toLowerCase().trim();
 
-        if (userSpoke === correctWord) {
-            resultText.innerText = `Правильно! Отличное произношение.`;
+        // Проверка: ищем совпадение слова в сказанной фразе
+        if (userSpoke.includes(correctWord) || correctWord.includes(userSpoke)) {
+            resultText.innerText = `💥 Отлично! Вы сказали: "${userSpoke}". Правильно!`;
             resultText.style.color = "#4caf50";
-            
-            if (currentIndex < currentWords.length - 1) {
-                btnNext.classList.remove('hidden');
-            } else {
-                resultText.innerText += " Вы прошли всю тему! 🎉";
+            if (currentIndex === currentWords.length - 1) {
+                resultText.innerText += "\n🎉 Вы прошли всю тему!";
             }
         } else {
-            resultText.innerText = `Не совсем верно. Вы сказали: "${userSpoke}". Попробуйте еще раз!`;
+            resultText.innerText = `Вы сказали: "${userSpoke}". Попробуйте еще раз!`;
             resultText.style.color = "#f44336";
         }
     };
 
     recognition.onerror = (event) => {
-        resultText.innerText = "Ошибка микрофона. Попробуйте снова.";
+        console.log("Ошибка распознавания:", event.error);
+        if (event.error === 'not-allowed') {
+            resultText.innerText = "Ошибка: Дайте приложению доступ к микрофону в настройках телефона!";
+        } else {
+            resultText.innerText = "Не удалось распознать речь. Попробуйте сказать еще раз.";
+        }
+        resultText.style.color = "#f44336";
     };
 } else {
     btnSpeak.style.display = "none";
-    resultText.innerText = "Распознавание речи не поддерживается на этом устройстве.";
+    resultText.innerText = "Распознавание речи не поддерживается в данном браузере.";
 }
 
+// Переключение вперед
 btnNext.onclick = () => {
-    currentIndex++;
-    showWord();
+    if (currentIndex < currentWords.length - 1) {
+        currentIndex++;
+        showWord();
+    }
 };
