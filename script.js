@@ -23,9 +23,11 @@ fetch('data.json')
     .then(data => {
         // Проверяем параметр старта из ссылки Телеграма (например: ?startapp=greetings)
         const startParam = tg.initDataUnsafe.start_param;
-        
+        // Если Telegram не передал параметр, включаем тему greetings принудительно
+	const finalParam = startParam || 'greetings';
+
         // Находим нужную тему в файле data.json
-        const selectedTheme = data.themes.find(t => t.theme_name === startParam);
+       const selectedTheme = data.themes.find(t => t.theme_name === finalParam);
 
         if (selectedTheme) {
             startGame(selectedTheme);
